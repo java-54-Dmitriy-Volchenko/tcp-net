@@ -1,4 +1,5 @@
 package telran.net;
+import java.io.IOException;
 import java.net.*;
 public class TcpServer {
 	Protocol protocol;
@@ -13,22 +14,23 @@ public class TcpServer {
 	}
 	public void run() {
 		try(ServerSocket serverSocket = new ServerSocket(port)){
-			//TODO using ServerSocket method setSoTimeout 
+			serverSocket.setSoTimeout(3000);
 			System.out.println("Server is listening on port " + port);
-			while(running) {
-				Socket socket = serverSocket.accept();
-			
-				TcpClientServerSession session =
-						new TcpClientServerSession(socket, protocol);
-				session.start();
-				//TODO handling timeout exception
-			}
-			
-				
-			
-		} catch(Exception e) {
-			throw new RuntimeException(e);
+			while (running) {
+                try {
+                    Socket socket = serverSocket.accept();
+
+                    TcpClientServerSession session = new TcpClientServerSession(socket, protocol);
+                    session.start();
+                } catch (SocketTimeoutException e) {
+                 
+                    
+               }
+           }
+            System.out.println("Server stopped");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 		}
-	}
 	
 }
