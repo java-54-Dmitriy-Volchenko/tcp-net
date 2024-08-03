@@ -10,8 +10,7 @@ public class TcpClientServerSession extends Thread{
 	public TcpClientServerSession(Socket socket, Protocol protocol, TcpServer tcpServer) {
 		this.socket = socket;
 		this.tcpServer = tcpServer;
-		//using the method setSoTimeout and some solution for getting session to know about shutdown
-		//you should stop the thread after shutdown command
+		
 		this.protocol = protocol;
 	}
 	public void run() {
