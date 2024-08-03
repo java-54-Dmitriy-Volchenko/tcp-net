@@ -10,18 +10,24 @@ public class TcpServer implements Runnable{
 	Protocol protocol;
 	int port;
 	boolean running = true;
-	private final ExecutorService executorService;
+	private final ExecutorService executor;
 	 
 	public TcpServer(Protocol protocol, int port) {
 		this.protocol = protocol;
 		this.port = port;
 		int poolSize = Runtime.getRuntime().availableProcessors();
-	    this.executorService = Executors.newFixedThreadPool(poolSize);
+	    this.executor = Executors.newFixedThreadPool(poolSize);
 	}
 	
 	public void shutdown() {
 		running = false;
-		executorService.shutdown(); 
+		executor.shutdown(); 
+		try {
+			executor.awaitTermination(1, TimeUnit.DAYS);
+		} catch (InterruptedException e) {
+		
+		
+	    }
 		
 	}
 	
@@ -34,7 +40,7 @@ public class TcpServer implements Runnable{
 				try {
 					Socket socket = serverSocket.accept();
 
-					executorService.execute(new TcpClientServerSession(socket, protocol, this));
+					executor.execute(new TcpClientServerSession(socket, protocol, this));
 					
 				} catch (SocketTimeoutException e) {
 					
